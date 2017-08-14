@@ -32,7 +32,7 @@ wget https://letsencrypt.org/certs/letsencryptauthorityx3.pem -O isrg_root.pem
 cat fullchain.pem isrg_root.pem > ca_cert_chain.pem
 
 # Create a Java keystore from the chain
-openssl pkcs12 -export -in cert.pem -inkey privkey.pem -name YOUR_FILE_NAME -chain -CAfile ca_cert_chain.pem -out OUTPUT_FILE.pk12 -pass pass:YOUR_KEYSTORE_PASSWORD
+openssl pkcs12 -export -in cert.pem -inkey privkey.pem -name YOUR_FILE_NAME -chain -CAfile ca_cert_chain.pem -out OUTPUT_FILE.pk12 -password pass:YOUR_KEYSTORE_PASSWORD
 
 # Move it to a location your Tomcat can read
 # The created keystore has to be added to your tomcat server.xml, something like:

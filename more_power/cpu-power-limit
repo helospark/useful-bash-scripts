@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$1" = "post" ]; then
+    sleep 2
+    echo 25000000 > /sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw
+    echo 25000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+    echo 25000000 > /sys/class/powercap/intel-rapl-mmio:0/constraint_1_power_limit_uw
+fi

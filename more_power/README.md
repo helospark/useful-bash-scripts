@@ -9,6 +9,16 @@ The commands needed:
       echo 25000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
       echo 25000000 > /sys/class/powercap/int^C-rapl-mmio:0/constraint_1_power_limit_uw
 
+You can also copy the power command to /bin
+
+        sudo cp power /bin/.
+        sudo chmod +x /bin/power
+
+Then you can set the power like the following for 22W:
+
+        power 22
+
+
 ## Making it permanent
 
 Copy the files:

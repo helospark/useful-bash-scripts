@@ -1,12 +1,26 @@
 #!/bin/bash
+set -e
 
-if ! [[ "$1" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
-    echo "Error: '$1' is not a valid numeric value." >&2
+if [[ $# -ne 1 ]] || ! [[ "$1" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    echo "Usage: power <watts>"
     exit 1
 fi
 
-RESULT=$(awk "BEGIN {print int($1 * 1000000)}")
+RESULT=$(awk "BEGIN {printf \"%.0f\", $1 * 1000000}")
 
-echo "$RESULT" | sudo tee /sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw > /dev/null
-echo "$RESULT" | sudo tee /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw > /dev/null
-echo "$RESULT" | sudo tee /sys/class/powercap/intel-rapl-mmio:0/constraint_1_power_limit_uw > /dev/null
+# The three power-limit files.
+LIMITS=(
+    "/sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw"
+    "/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw"
+    "/sys/class/powercap/intel-rapl-mmio:0/constraint_1_power_limit_uw"
+)
+
+# Apply the requested limit to all three files.
+for f in "${LIMITS[@]}"; do
+    echo "$RESULT" | sudo tee "$f" > /dev/null
+done
+
+# Save the desired limit persistently.
+echo "$RESULT" | sudo tee /var/lib/cpu-power-limit/target_uw > /dev/null
+
+echo "CPU power limit set to $1 W and saved."

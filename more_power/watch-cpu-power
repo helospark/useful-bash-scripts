@@ -1,0 +1,45 @@
+#!/bin/bash
+
+TARGET_FILE="/var/lib/cpu-power-limit/target_uw"
+
+LIMITS=(
+    "/sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw"
+    "/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw"
+    "/sys/class/powercap/intel-rapl-mmio:0/constraint_1_power_limit_uw"
+)
+
+while true; do
+    if [[ ! -r "$TARGET_FILE" ]]; then
+        logger -t cpu-power "No saved power limit found."
+        sleep 10
+        continue
+    fi
+
+    TARGET_UW=$(cat "$TARGET_FILE")
+
+    if ! [[ "$TARGET_UW" =~ ^[0-9]+$ ]]; then
+        logger -t cpu-power "Invalid saved power limit: $TARGET_UW"
+        sleep 10
+        continue
+    fi
+
+    for f in "${LIMITS[@]}"; do
+        if [[ ! -e "$f" ]]; then
+            logger -t cpu-power "Power limit file missing: $f"
+            continue
+        fi
+
+        CURRENT=$(cat "$f")
+
+        if [[ "$CURRENT" != "$TARGET_UW" ]]; then
+            logger -t cpu-power \
+                "Restoring $f from $CURRENT to $TARGET_UW"
+
+            if ! printf '%s\n' "$TARGET_UW" > "$f"; then
+                logger -t cpu-power "Failed to restore $f"
+            fi
+        fi
+    done
+
+    sleep 10
+done

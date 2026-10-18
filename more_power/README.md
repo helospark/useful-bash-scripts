@@ -31,6 +31,13 @@ Copy the files:
     systemctl daemon-reload
     systemctl enable --now cpu-power-limit.service
 
+Sometimes the system can set it back to the original, so this script can help watch the latest setting and reset
+
+    cp watch-cpu-power /usr/local/sbin/
+    cp watch-cpu-power.service /etc/systemd/system/
+    systemctl daemon-reload
+    systemctl enable --now watch-cpu-power.service
+
 ## Debug
 
 There may be other power limits, run this script to explore all power limits

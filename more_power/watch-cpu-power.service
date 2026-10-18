@@ -1,0 +1,12 @@
+[Unit]
+Description=Monitor and restore Intel CPU power limits
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/watch-cpu-power
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

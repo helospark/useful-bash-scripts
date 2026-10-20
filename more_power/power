@@ -21,6 +21,7 @@ for f in "${LIMITS[@]}"; do
 done
 
 # Save the desired limit persistently.
+sudo mkdir -p /var/lib/cpu-power-limit
 echo "$RESULT" | sudo tee /var/lib/cpu-power-limit/target_uw > /dev/null
 
 echo "CPU power limit set to $1 W and saved."
